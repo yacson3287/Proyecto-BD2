@@ -1,0 +1,129 @@
+-- CREAR TABLA TIEMPO
+
+create table TIEMPO (
+
+  "FECHA" number NOT NULL primary key,
+  "AÑO" number NOT NULL,
+  "MES" number NOT NULL,
+  DIA_MES number NOT NULL,
+  DIA varchar2 (10 byte)
+
+);
+
+--llenar tiempo
+
+create or replace
+procedure llenar_tiempo
+is
+cursor ti is (select 
+to_number(to_char(fmo_fecha,'ddmmyyyy'))fecha,
+to_number(to_char(fmo_fecha,'dd'))diames,
+to_number(to_char(fmo_fecha,'mm'))mes,
+to_number(to_char(fmo_fecha,'yyyy'))año,
+to_char(fmo_fecha,'day')dia 
+from sds_formatos_fmo);
+
+begin
+
+for recor in ti loop
+INSERT INTO tiempo values (recor.fecha,recor.diames,recor.mes,recor.año,recor.dia);
+end loop;
+
+end llenar_tiempo;
+
+
+
+--tabla solicitudes
+
+create table "solicitudes"(
+
+"cod" number not null primary key,
+"fmo_codigo" number
+
+); 
+
+-- crear secuencia para tabla solicitudes
+
+CREATE SEQUENCE "SEQ_SOLICITUDES" 
+MINVALUE 0
+ MAXVALUE 999999
+ INCREMENT BY 1 
+START WITH 0 
+CACHE 20 
+NOORDER NOCYCLE ;
+
+-- procedimiemnto para llenar tabla solicitudes
+
+create or replace
+procedure llenar_solicitudes
+is
+cursor ti is (select fmo_codigo
+ 
+from sds_formatos_fmo);
+
+begin
+
+for recor in ti loop
+INSERT INTO solicitudes values ( seq_solicitudes.nextval, recor.fmo_codigo );
+end loop;
+
+end llenar_solicitudes;
+
+
+
+-- crear tabla estado
+
+create table "estado" (
+
+"cod" number not null primary key ,
+"etu_codigo" varchar2(10),
+"nombre" varchar2(20)
+);
+
+-- secuencia tabla estado
+
+
+CREATE SEQUENCE "SEQ_estado" 
+MINVALUE 0
+ MAXVALUE 999999
+ INCREMENT BY 1 
+START WITH 0 
+CACHE 20 
+NOORDER NOCYCLE ;
+
+--procedimienmto llenar estado
+
+create or replace
+procedure llenar_estado
+is
+cursor ti is (select etu_codigo,etu_nombre
+ 
+from sds_estatus_etu);
+
+begin
+
+for recor in ti loop
+INSERT INTO estado values ( seq_estado.nextval, recor.etu_codigo, recor.etu_nombre);
+end loop;
+
+end llenar_estado;
+
+-- crear tabla tiempo promedio
+
+create table tiempo_promedio(
+ "cod" number not null primary key,
+"std_cod" number not null ,
+"edo_cod" number not null ,
+"tpo_cod" number not null ,
+"promedio" number
+);
+
+
+-- secuencia tabla tiempo promedio
+CREATE SEQUENCE "SEQ_TPROMEDIO" 
+MINVALUE 0
+ MAXVALUE 999999
+ INCREMENT BY 1 
+START WITH 0 
+CACHE 20 
+NOORDER NOCYCLE ;
